@@ -26,9 +26,7 @@ for item in items:
         _map[name] = 1
 
 # リストのソート
-_list = []
-for key in _map.keys():
-    _list.append((key, _map.get(key)))
+_list = list(_map.items())
 _list.sort(key=lambda a: a[1])
 _list.reverse()
 

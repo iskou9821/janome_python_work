@@ -7,7 +7,7 @@ import Janome.MeCab
 t = Janome.Twitter.TwitterService("./config.ini")
 
 # ユーザー名を指定してツイートのデータを取得
-data = t.get_tweets_by_user('@kou777')
+data = t.get_tweets_by_user('@kou_i')
 
 # 取得したデータから、ツイートの本文だけを取得(ツイートのデータは辞書型で取得)
 texts = list(map(lambda t: t['text'], data))

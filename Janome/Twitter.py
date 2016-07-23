@@ -12,11 +12,6 @@ class TwitterService:
     """
     __API_TIMELINE_URL = "https://api.twitter.com/1.1/statuses/user_timeline.json?"
 
-    __consumer_key = ""
-    __consumer_secret = ""
-    __access_token_key = ""
-    __access_token_secret = ""
-
     def __init__(self, file_path):
         """
         設定ファイルを指定し、その内容を元に初期化を行うコンストラクタ

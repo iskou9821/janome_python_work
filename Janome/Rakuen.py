@@ -10,7 +10,6 @@ import time
 class RakutenService:
     __URL_PREFIX = 'https://app.rakuten.co.jp/services/api/Travel/'
     __URL_SUFFIX = '20131024?format=json&applicationId='
-    _application_id = None
 
     def __init__(self, file_path):
         """
@@ -232,8 +231,7 @@ class RakutenService:
                 i = 1
 
                 # 詳細地域の情報は「detailClassCode」というパラメータに入れて送る
-                while i < len(small_class_code_list):
-                    detail_class_code = small_class_code_list[i]
+                for detail_class_code in small_class_code_list[1:]:
                     params['detailClassCode'] = detail_class_code
                     query_result = self.__get('SimpleHotelSearch', params)
                     if query_result is not None:

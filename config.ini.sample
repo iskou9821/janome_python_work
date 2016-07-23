@@ -3,3 +3,6 @@ consumer_key=[consumer_keyを入力]
 consumer_secret=[consumer_secretを入力]
 access_token_key=[access_token_keyを入力]
 access_token_secret=[access_token_secretを入力]
+
+[rakuten]
+application_id=[application_idを入力]

@@ -1,10 +1,10 @@
 # coding:UTF-8
 
-import Janome.Twitter
-import Janome.MeCab
+from Janome.Twitter import TwitterService
+from Janome.MeCab import MeCabService
 
 # Twitterにアクセスするためのクラスのインスタンスを作成(実体はJanome/Twitter.pyに)
-t = Janome.Twitter.TwitterService("./config.ini")
+t = TwitterService("./config.ini")
 
 # ユーザー名を指定してツイートのデータを取得
 data = t.get_tweets_by_user('@kou_i')
@@ -16,7 +16,7 @@ texts = list(map(lambda t: t['text'], data))
 text = "\n".join(texts)
 
 # テキストを構文解析にかけ、結果を辞書の配列として受け取る
-result = Janome.MeCab.MeCabService.parse(text)
+result = MeCabService.parse(text)
 
 # 「地域」のデータだけを抽出する
 #

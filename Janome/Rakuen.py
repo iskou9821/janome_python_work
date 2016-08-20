@@ -228,16 +228,12 @@ class RakutenService:
             # その情報がある場合には、それも送らないと楽天側からエラーを返されてしまうため、その場合には必ずセットする
             if len(small_class_code_list) > 1:
                 small_class_code = small_class_code_list[0]
-                i = 1
 
                 # 詳細地域の情報は「detailClassCode」というパラメータに入れて送る
                 for detail_class_code in small_class_code_list[1:]:
                     params['detailClassCode'] = detail_class_code
                     query_result = self.__get('SimpleHotelSearch', params)
-                    if query_result is not None:
-                        # ホテル情報はレスポンス(辞書型)の「hotels」という要素に入っているため、それを利用する
-                        result.extend(query_result['hotels'])
-                    i += 1
+                    result.extend(self.__get_hotel_info(query_result))
 
                 # 最後に、detailClassCodeの情報をリセットしておく
                 if 'detailClassCode' in params:
@@ -245,9 +241,55 @@ class RakutenService:
             else:
                 # detailClassCodeがない場合は、そのままクエリーを送る
                 query_result = self.__get('SimpleHotelSearch', params)
-                if query_result is not None:
-                    # ホテル情報はレスポンス(辞書型)の「hotels」という要素に入っているため、それを利用する
-                    result.extend(query_result['hotels'])
+                result.extend(self.__get_hotel_info(query_result))
 
         return result
+
+    @classmethod
+    def __get_hotel_info(cls, hotels):
+        """
+        ホテル情報の詳細を取得する
+        :param hotels:
+        :return:
+        """
+        hotels_result = list()
+
+        if hotels is None:
+            return hotels_result
+
+        # ホテル情報取得のクエリー結果は辞書となっており、「hotels」という要素の中に配列としてデータが入っている
+        for hotel_info in hotels['hotels']:
+            # 配列の一つ一つの要素は辞書型で、「hotel」という要素にデータが入っている
+            hotel = hotel_info['hotel']
+
+            # ホテル情報は配列になっており、1番目には基本情報(ホテル名など)が入っている
+            basic_info = hotel[0]['hotelBasicInfo']
+
+            # 2番目にはホテルのランキング詳細情報(風呂、食事、場所などの各項目に対する評価点)が入っている
+            ranking_info = hotel[1]['hotelRatingInfo']
+
+            # 評価点は「serviceAverage」と「locationAverage」の平均を取る(＊入っていない場合もある)
+            service_average = ranking_info['serviceAverage'] if ranking_info['serviceAverage'] is not None else 0
+            location_average = ranking_info['locationAverage'] if ranking_info['locationAverage'] is not None else 0
+
+            # どちらかが0点の場合は、一方の評価点のみを採用する
+            if service_average <= 0:
+                average = service_average
+            elif location_average <= 0:
+                average = location_average
+            else:
+                average = (service_average + location_average) / 2
+
+            # 評価点の平均が3.5以上のホテルのみを候補とする
+            if average > 3.5:
+                hotels_result.append({
+                    'hotel_name': basic_info['hotelName'],
+                    'site_url': basic_info['hotelInformationUrl'],
+                    'points': average,
+                    'basic_info': basic_info,
+                    'ranking_info': ranking_info
+                })
+
+        return hotels_result
+
 

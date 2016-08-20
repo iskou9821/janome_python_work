@@ -10,4 +10,6 @@ print(location_dict)
 
 hotels = rakuten.get_hotels(location_dict['北海道'])
 
-print(hotels)
+# ホテル情報を出力
+for hotel in hotels:
+    print('%s / %1.1f, %s' % (hotel['hotel_name'], hotel['points'], hotel['site_url']))

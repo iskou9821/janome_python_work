@@ -1,8 +1,13 @@
-# coding:UTF-8
+"""
+201607, 201608 - 楽天のAPIを利用し、ホテルのリストを取得する
+"""
 
-from Janome.Rakuen import RakutenService
+import sys
+sys.path.append("../")
 
-rakuten = RakutenService('./config.ini')
+from Janome.api.Rakuen import RakutenService
+
+rakuten = RakutenService('../config.ini')
 
 location_dict = rakuten.get_location_directory()
 

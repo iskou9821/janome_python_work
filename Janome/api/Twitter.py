@@ -11,6 +11,7 @@ class TwitterService:
     Twitterにアクセスし、ツイートの情報を取得するためのクラス
     """
     __API_TIMELINE_URL = "https://api.twitter.com/1.1/statuses/user_timeline.json?"
+    __API_PROFILE_URL = "https://api.twitter.com/1.1/users/show.json?"
 
     def __init__(self, file_path):
         """
@@ -39,8 +40,7 @@ class TwitterService:
             self.__access_token_secret
         )
 
-        # ユーザーのタイムライン情報を取得
-        res = session.get(self.__API_TIMELINE_URL, params=params)
+        res = session.get(url, params=params)
 
         # レスポンスが正常に取得できた(=200 OKが返ってきた)場合は、レスポンスのjsonデータを辞書型にparseして返す
         if res.status_code == 200:
@@ -48,6 +48,17 @@ class TwitterService:
         else:
             print(res)
             raise Exception("Twitterからのデータ取得に失敗しました:" + str(res.status_code))
+
+    def get_user_profile(self, screen_name):
+        """
+        ユーザー名を指定してプロフィールを取得
+        :param screen_name:
+        :return:
+        """
+        params = {
+            "screen_name": screen_name
+        }
+        return self.__get_data(self.__API_PROFILE_URL, params)
 
     def get_tweets_by_user(self, screen_name):
         """
@@ -59,6 +70,7 @@ class TwitterService:
         params = {
             "screen_name": screen_name,
             "result_type": "recent",
-            "count": "15"
+            "count": "100"
         }
+        print('ツイートを取得します -> %s' % (screen_name))
         return self.__get_data(self.__API_TIMELINE_URL, params)
